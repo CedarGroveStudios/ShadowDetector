@@ -40,6 +40,15 @@ class ShadowDetector():
         self._decay = max(min(decay, 1.0), 0.0)
         self.refresh_background()
 
+    @property
+    def background(self):
+        """The last measured background level."""
+        return self._background
+    
+    @property
+    def foreground(self):
+        """The last measured foreground level."""
+        return self._foreground
 
     def _read(self):
         """Read and filter sensor level using a simple simple n-order finite 
@@ -55,13 +64,11 @@ class ShadowDetector():
         level per the decay setting."""
         self._foreground = self._read()
         self._background = ((1.0 - self._decay) * self._background) + (self._decay * self._foreground)
-        return
 
 
     def refresh_background(self):
         """Read background sensor level."""
         self._background = self._read()
-        return
 
 
     def detect(self):
