@@ -49,6 +49,7 @@ class ShadowDetector():
     def foreground(self):
         """The last measured foreground level."""
         return self._foreground
+    
 
     def _read(self):
         """Read and filter sensor level using a simple simple n-order finite 
