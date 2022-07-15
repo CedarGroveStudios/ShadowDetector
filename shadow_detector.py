@@ -1,7 +1,7 @@
 # Shadow Detector
 # Copyright 2022 by JG for Cedar Grove Maker Studios
 #
-# gesture_detector.py 2022-07-14 v1.0714
+# gesture_detector.py 2022-07-15 v1.0715
 
 import board
 import time
@@ -14,46 +14,35 @@ class ShadowDetector():
     Bluefruit, and the ALS-PT19 breakout board. Useful as a simple gesture
     detector."""
 
-    def __init__(self, pin, threshold=0.9, samples=2000, auto=False, decay=0.01):
-        """Class initializer. Measure the initial background light level and
-        automatically select the optimal number of samples for the low-pass
-        filter if auto = True.
-        The decay factor value is the fraction of influence the foreground has
-        on adjusting the previously measured background level; 0.01 is a weight
-        of 1 part foreground for 99 parts background. Decay defaults to 0.01;
-        range is 0.0 to 1.0"""
+    def __init__(self, pin, threshold=0.9, samples=2000, decay=0.01):
+        """Class initializer. Instantiate the light sensor input and measure the
+        initial background light level.
+
+        :param board pin:   The light sensor's analog input pin.
+        :param float threshold: The relative brightness threshold for shadow
+                                detection.
+        :param int samples: The number of samples needed for the _read method's
+                            low-pass filter. Default is 2000 for a cut-off
+                            frequency of approximately 25Hz when using a
+                            SAMD-51 (M4) clocked at 120MHz.
+        :param float decay: The magnitude of the forground-induced decay of the
+                            previously measured background value, used to
+                            continuously adjust the background value each time
+                            the foreground value is read to accomodate slowly
+                            changing background light levels. Default is 0.01,
+                            equivalent to a weight of 1 foreground sample per
+                            99 background samples. Range is 0.0 to 1.0."""
 
         self._light_sensor = AnalogIn(pin)
         self._brightness_threshold = threshold
         self._samples = samples
         self._decay = max(min(decay, 1.0), 0.0)
-
-        if auto:
-            """Calculate the number of samples needed to achieve a target
-            per-sample delay of 135 usec (0.000135 sec). Creates an n-order
-            finite impulse response (FIR) moving-average (boxcar) low-pass 
-            filter."""
-            print("automatic samples calculation")
-            test_samples = [2000, 8000]  # Typical min and max samples values
-            test_delays = []
-            for i, self._samples in enumerate(test_samples):
-                t0 = time.monotonic()
-                self.refresh_background()
-                test_delays.append((time.monotonic() - t0) / self._samples)
-            # Create slope-intercept formula based on test values; y = mx + b
-            slope = ((test_samples[1] - test_samples[0]) / (test_delays[1] - test_delays[0]))
-            intercept = test_samples[1] - (slope * test_delays[1])
-            self._samples = int((slope * 0.000135) + intercept)
-        else:
-            # Use default or provided samples value
-            print("default samples calculation")
-            self._samples = samples
-        print(f"samples: {self._samples:6.0f}")
+        self.refresh_background()
 
 
     def _read(self):
-        """Read sensor and filter measurement using discrete time FIR filter of
-        order = self._samples, sample delay = self._sample_delay."""
+        """Read sensor and filter measurement using a simple simple n-order
+        finite impulse response (FIR) moving-average (boxcar) low-pass filter."""
         measurement = 0
         for i in range(self._samples):
             measurement = measurement + (self._light_sensor.value / self._samples)
@@ -61,8 +50,8 @@ class ShadowDetector():
 
 
     def _get_foreground(self):
-        """Read foreground sensor value. Background level is adjusted slightly
-        each time the foreground level is read per the decay setting."""
+        """Read foreground sensor value and fractionally adjust the background
+        level per the decay setting."""
         self._foreground = self._read()
         self._background = ((1.0 - self._decay) * self._background) + (self._decay * self._foreground)
         return
@@ -70,7 +59,6 @@ class ShadowDetector():
 
     def refresh_background(self):
         """Read background sensor value."""
-        print("Refresh light sensor background measurement")
         self._background = self._read()
         return
 
