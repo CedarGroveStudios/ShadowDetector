@@ -4,7 +4,7 @@ import board
 import time
 from shadow_detector import ShadowDetector
 
-# Instantiate detector class
+# Instantiate detector class and establish background level
 gesture = ShadowDetector(pin=board.LIGHT)
 
 while True:
@@ -15,3 +15,4 @@ while True:
             time.sleep(1)
         # Rebaseline the background level
         gesture.refresh_background()
+        print(f"background: {gesture.background:6.0f}")
