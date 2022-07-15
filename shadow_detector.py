@@ -4,7 +4,6 @@
 # gesture_detector.py 2022-07-15 v1.0715
 
 import board
-import time
 from analogio import AnalogIn
 
 class ShadowDetector():
@@ -20,17 +19,19 @@ class ShadowDetector():
 
         :param board pin:   The light sensor's analog input pin.
         :param float threshold: The relative brightness threshold for shadow
-                                detection.
+                                detection. Defaults to 0.9, 90% of the foreground-
+                                to-background brightness ratio. Range is 0.0
+                                to 1.0.
         :param int samples: The number of samples needed for the _read method's
                             low-pass filter. Default is 2000 for a cut-off
                             frequency of approximately 25Hz when using a
-                            SAMD-51 (M4) clocked at 120MHz.
-        :param float decay: The magnitude of the forground-induced decay of the
-                            previously measured background value, used to
-                            continuously adjust the background value each time
-                            the foreground value is read to accomodate slowly
-                            changing background light levels. Default is 0.01,
-                            equivalent to a weight of 1 foreground sample per
+                            SAMD-51 (M4) clocked at 120MHz. Range is any positive 
+                            non-zero integer value.
+        :param float decay: The magnitude of the forground-induced decay used to 
+                            continuously adjust the background value each
+                            time the foreground value is read. The decay compensates
+                            for slowly changing background light levels. Default is
+                            0.01, equivalent to a weight of 1 foreground sample per
                             99 background samples. Range is 0.0 to 1.0."""
 
         self._light_sensor = AnalogIn(pin)
@@ -41,8 +42,8 @@ class ShadowDetector():
 
 
     def _read(self):
-        """Read sensor and filter measurement using a simple simple n-order
-        finite impulse response (FIR) moving-average (boxcar) low-pass filter."""
+        """Read and filter sensor level using a simple simple n-order finite 
+        impulse response (FIR) moving-average (boxcar) low-pass filter."""
         measurement = 0
         for i in range(self._samples):
             measurement = measurement + (self._light_sensor.value / self._samples)
@@ -50,7 +51,7 @@ class ShadowDetector():
 
 
     def _get_foreground(self):
-        """Read foreground sensor value and fractionally adjust the background
+        """Read foreground sensor level and fractionally adjust the background
         level per the decay setting."""
         self._foreground = self._read()
         self._background = ((1.0 - self._decay) * self._background) + (self._decay * self._foreground)
@@ -58,7 +59,7 @@ class ShadowDetector():
 
 
     def refresh_background(self):
-        """Read background sensor value."""
+        """Read background sensor level."""
         self._background = self._read()
         return
 
@@ -73,7 +74,7 @@ class ShadowDetector():
         self._get_foreground()
         brightness_ratio = self._foreground / self._background
         if brightness_ratio < self._brightness_threshold:
-            # Shadow detected; ratio is less than threshold
+            # Shadow detected; brightness ratio is less than threshold
             return True
         elif brightness_ratio > 2 - self._brightness_threshold:
             # Background light level increased; refresh background measurement
