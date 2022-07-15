@@ -30,8 +30,8 @@ class ShadowDetector():
 
         if auto:
             """Calculate the number of samples needed to achieve a target
-            per-sample delay of 135 usec (0.000135 sec). Creates a first order
-            50Hz low-pass filter."""
+            per-sample delay of 135 usec (0.000135 sec). Creates an n-order
+            finite impulse response (FIR) 50Hz low-pass filter."""
             print("automatic samples calculation")
             test_samples = [2000, 8000]  # Typical min and max samples values
             test_delays = []
