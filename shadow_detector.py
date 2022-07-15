@@ -11,7 +11,12 @@ class ShadowDetector():
     light sensor such as the ALS-PT19 phototransistor used in the Adafruit
     PyPortal, PyGamer, PyBadge, CircuitPlayground Express, CircuitPlayground
     Bluefruit, and the ALS-PT19 breakout board. Useful as a simple gesture
-    detector."""
+    detector.
+
+    :param int background: The most recent background measurement. Range is 0 to
+                           65535. A value of 65535 is approximately 1100 Lux.
+    :param int foreground: The most recent foreground measurement. Range is 0 to
+                           65535. A value of 65535 is approximately 1100 Lux."""
 
     def __init__(self, pin, threshold=0.9, samples=2000, decay=0.01):
         """Class initializer. Instantiate the light sensor input and measure the
@@ -25,9 +30,9 @@ class ShadowDetector():
         :param int samples: The number of samples needed for the _read method's
                             low-pass filter. Default is 2000 for a cut-off
                             frequency of approximately 25Hz when using a
-                            SAMD-51 (M4) clocked at 120MHz. Range is any positive 
+                            SAMD-51 (M4) clocked at 120MHz. Range is any positive
                             non-zero integer value.
-        :param float decay: The magnitude of the forground-induced decay used to 
+        :param float decay: The magnitude of the forground-induced decay used to
                             continuously adjust the background value each
                             time the foreground value is read. The decay compensates
                             for slowly changing background light levels. Default is
@@ -44,15 +49,15 @@ class ShadowDetector():
     def background(self):
         """The last measured background level."""
         return self._background
-    
+
     @property
     def foreground(self):
         """The last measured foreground level."""
         return self._foreground
-    
+
 
     def _read(self):
-        """Read and filter sensor level using a simple simple n-order finite 
+        """Read and filter sensor level using a simple simple n-order finite
         impulse response (FIR) moving-average (boxcar) low-pass filter."""
         measurement = 0
         for i in range(self._samples):
