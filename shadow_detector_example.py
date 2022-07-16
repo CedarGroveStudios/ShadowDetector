@@ -5,7 +5,7 @@ import time
 from shadow_detector import ShadowDetector
 
 # Instantiate detector class and establish background level
-gesture = ShadowDetector(pin=board.LIGHT)
+gesture = ShadowDetector(pin=board.LIGHT, auto=True)
 
 while True:
     if gesture.detect():
