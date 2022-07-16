@@ -21,7 +21,7 @@ class ShadowDetector:
         """Class initializer. Instantiate the light sensor input and measure the
         initial background light level.
 
-        :param board pin:   The light sensor's analog input pin.
+        :param board pin:   The analog input pin that connects to the light sensor.
         :param float threshold: The relative brightness threshold for shadow
                             detection. Defaults to 0.9, 90% of the foreground-
                             to-background brightness ratio. Range is 0.0 to 1.0.
@@ -36,7 +36,7 @@ class ShadowDetector:
                             for slowly changing background light levels. Default is
                             0.01, equivalent to a weight of 1 foreground sample per
                             99 background samples. Range is 0.0 to 1.0.
-        :param bool auto:   Enables automatic samples detection when True. if
+        :param bool auto:   Enables automatic samples detection when True. If
                             enabled, the samples value is replaced with a
                             calculated value based upon measured acquisition
                             time. This preserves the low-pass filter's cutoff
@@ -106,16 +106,16 @@ class ShadowDetector:
         )
 
     def refresh_background(self):
-        """Read the filtered background sensor level."""
+        """Read and update the filtered background sensor level."""
         self._background = self._read()
 
     def detect(self):
-        """The fundamental ShadowDetector function. Compare foreground to
+        """The fundamental ShadowDetector function. Compares foreground to
         background light levels to detect a shadow. The function uses two
         thresholds, a lower one that indicates a shadow and an upper threshold
         that when exceeded, indicates an increased background light level.
-        Returns False unless the ratio of foreground to background is less than
-        the threshold. A non-blocking method."""
+        Returns True when the ratio of foreground to background is less than the
+        threshold. A non-blocking method."""
 
         self._get_foreground()
         brightness_ratio = self._foreground / self._background
