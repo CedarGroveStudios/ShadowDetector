@@ -4,6 +4,6 @@ A CircuitPython class to detect a shadow cast over an analog light sensor such a
 
     Useful as a simple gesture detector.
 
-The ShadowDetector has only been tested on the PyPortal so far, but should be able to function reliably on other microcontrollers. The automatic sampling mode will test the microcontroller's analog acquisition latency and adjust the internal low-pass filter's sample size to maintain the 25 Hz cutoff frequency.
+The ShadowDetector class was tested on the PyPortal, but should be able to function reliably on other microcontrollers with similar sensors. The automatic samples mode will test the microcontroller's analog acquisition latency and adjust the internal low-pass filter's sample size to maintain the ~25 Hz cutoff frequency.
 
 ![Light sensor signal low-pass filter comparison](https://github.com/CedarGroveStudios/ShadowDetector/blob/main/docs/FIR_boxcar_filter_pyportal.png)
