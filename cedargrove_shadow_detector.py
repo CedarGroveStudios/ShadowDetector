@@ -1,7 +1,7 @@
 # Shadow Detector
 # Copyright 2022 by JG for Cedar Grove Maker Studios
 #
-# gesture_detector.py 2022-07-15 v2.0715
+# cedargrove_shadow_detector.py 2022-07-15 v2.0715
 
 import board
 import time
