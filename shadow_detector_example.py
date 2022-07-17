@@ -2,7 +2,7 @@
 
 import board
 import time
-from shadow_detector import ShadowDetector
+from ceddargrove_shadow_detector import ShadowDetector
 
 # Instantiate detector class and establish background level
 gesture = ShadowDetector(pin=board.LIGHT, auto=True)
