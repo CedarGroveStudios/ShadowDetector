@@ -21,7 +21,7 @@ class ShadowDetector:
         """Class initializer. Instantiate the light sensor input and measure the
         initial background light level.
 
-        :param pin pin:     The analog input pin that connects to the light sensor.
+        :param board.pin pin: The analog input pin that connects to the light sensor.
         :param float threshold: The relative brightness threshold for shadow
                             detection. Defaults to 0.9, 90% of the foreground-
                             to-background brightness ratio. Range is 0.0 to 1.0.
